@@ -31,8 +31,7 @@ export const forgetPassword = catchAsync(async (req , res, next)=>{
 
 export const resetPassword = catchAsync(async (req , res , next)=>{
 
-  const {resetToken} = req.params
-  const {password} = req.body
+  const {password , resetToken} = req.body
 
   const response = await resetPasswordService(resetToken , password)
 
