@@ -31,6 +31,13 @@ const apiHandler = (err, req, res, next) => {
       error = new ApiError(message, 400);
     }
 
+      // Mongoose validation error
+      if (err.name === "TokenExpiredError") {
+        // map over the error and return error response
+        const message = "Authentication Error"
+        error = new ApiError(message, 400);
+      }
+
   console.log("err", err);
   console.log("error", error);
 

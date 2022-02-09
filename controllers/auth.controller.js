@@ -1,4 +1,4 @@
-import { forgetPasswordService, loginService, registerService, resetPasswordService } from "../services/auth.service.js";
+import { forgetPasswordService, loginService, logoutService, refreshTokenService, registerService, resetPasswordService } from "../services/auth.service.js";
 import catchAsync from "../utils/catchAsync.js";
 import ApiError from "../utils/errorClass.js";
 
@@ -36,7 +36,24 @@ export const resetPassword = catchAsync(async (req , res , next)=>{
 
   const response = await resetPasswordService(resetToken , password)
 
-
   res.send(response)
 
+})
+
+export const refreshToken = catchAsync(async (req , res, next)=>{
+
+  const  {refreshToken} = req.body
+
+  const response = await refreshTokenService(refreshToken)
+
+  res.send(response)
+})
+
+export const logout = catchAsync(async (req , res, next)=>{
+
+  const  {refreshToken} = req.body
+
+  const response = await logoutService(refreshToken)
+
+  res.status(204).send()
 })

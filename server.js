@@ -7,6 +7,8 @@ import authRoutes from "./routers/auth.route.js";
 import userRoutes from "./routers/user.routes.js";
 import connectDB from "./config/db.config.js";
 
+import "./config/redis.config.js"
+
 const app = express();
 
 dotenv.config();

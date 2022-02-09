@@ -1,10 +1,12 @@
 import User from "../models/user.model.js";
 import Token from "../models/token.model.js";
 import ApiError from "../utils/errorClass.js";
-import {  generateAccessToken, generateRefreshToken } from "../utils/jwtUtils.js";
+import {  generateAccessToken, generateRefreshToken, verifyRefreshJwt } from "../utils/jwtUtils.js";
 import crypto from "crypto"
 import bcrypt from "bcrypt"
 import { sendResetMail } from "../utils/email.utils.js";
+import { token } from "morgan";
+import client from "../config/redis.config.js";
 
 
 export const registerService = async (reqBody) => {
@@ -30,12 +32,18 @@ export const registerService = async (reqBody) => {
   const refreshToken = await generateRefreshToken(user._id)
 
 
-  const res = {
+  const data = {
     user :user, 
     tokens : {
       accessToken ,
       refreshToken
     }
+  }
+
+  const res = {
+    success : true,
+    message : "Successful Registration",
+    data 
   }
 
   return res;
@@ -67,16 +75,19 @@ export const loginService = async (reqBody) => {
   const accessToken = await generateAccessToken(user._id)
   const refreshToken = await generateRefreshToken(user._id)
 
-
-  const res = {
+  const data = {
     user :user, 
     tokens : {
       accessToken ,
       refreshToken
     }
   }
-
-
+  
+  const res = {
+    success : true,
+    message : "Successful Registration",
+    data 
+  }
 
   return res
 
@@ -141,8 +152,14 @@ export const forgetPasswordService = async (email) => {
   
   // send email
   const emailRes = await sendResetMail(mailDetails)
+  
+  const res = {
+    success : true,
+    message : "Password reset link sent successfully",
+    data : null
+  }
 
-  return link
+  return res
 
 }
 
@@ -181,7 +198,54 @@ export const resetPasswordService = async (resetToken , password) => {
 
   const deleteToken = await Token.findByIdAndDelete(tokenData._id)
 
-  return "password chnaged"
+  const res = {
+    success : true,
+    message : "Password changed successfully",
+    data : null
+  }
 
+  return res
+
+}
+
+export const refreshTokenService = async (reqRefreshToken) => {
+
+  const userId = await verifyRefreshJwt(reqRefreshToken)
+
+  const user = await User.findById(userId)
+
+  if (!user) {
+      return next(new ApiError("Please Authenticate" , 401))
+  }
+
+  const accessToken = await generateAccessToken(user._id)
+  const refreshToken = await generateRefreshToken(user._id)
+
+  const res = {
+    accessToken ,
+    refreshToken
+  }
+
+  return res
+
+}
+
+export const logoutService = async (refreshToken) => {
+
+  // verify the refresh token
+
+  const userId = await verifyRefreshJwt(refreshToken)
+
+  //delete the token from redis
+
+  client.del(userId).then((data)=>{
+    console.log(data);
+    return
+  })  
+  .catch((err)=>{
+    throw new ApiError()
+  })
+
+  // send 204  in response
 
 }

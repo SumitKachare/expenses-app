@@ -19,11 +19,9 @@ export const authVerify = async (req , res , next) => {
             return next(new ApiError("Please Authenticate" , 401))
         }
 
-        const decoded = await verifyAccessJwt(token)
+        const userId = await verifyAccessJwt(token)
 
-        console.log("decoded" , decoded);
-
-        const user = await User.findById(decoded.id)
+        const user = await User.findById(userId)
 
         if (!user) {
             return next(new ApiError("Please Authenticate" , 401))
