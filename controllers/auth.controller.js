@@ -6,7 +6,7 @@ export const register = catchAsync(async (req, res, next) => {
 
   let response = await registerService(req.body);
 
-  res.send(response);
+  res.status(200).send(response);
   
 });
 
@@ -15,7 +15,7 @@ export const login = catchAsync(async (req, res, next) => {
 
   let response = await loginService(req.body);
 
-  res.send(response);
+  res.status(200).send(response);
   
 });
 
@@ -26,7 +26,7 @@ export const forgetPassword = catchAsync(async (req , res, next)=>{
 
   let respose = await forgetPasswordService(email)
 
-  res.send(respose)
+  res.status(200).send(respose)
 })
 
 export const resetPassword = catchAsync(async (req , res , next)=>{
@@ -35,7 +35,7 @@ export const resetPassword = catchAsync(async (req , res , next)=>{
 
   const response = await resetPasswordService(resetToken , password)
 
-  res.send(response)
+  res.status(200).send(response)
 
 })
 
@@ -45,7 +45,7 @@ export const refreshToken = catchAsync(async (req , res, next)=>{
 
   const response = await refreshTokenService(refreshToken)
 
-  res.send(response)
+  res.status(200).send(response)
 })
 
 export const logout = catchAsync(async (req , res, next)=>{

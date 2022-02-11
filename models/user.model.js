@@ -18,14 +18,18 @@ const userSchema = new mongoose.Schema(
       trim: true,
       unique: true,
     },
+    mobile : {
+      type : Number,
+      match : [/^[0-9]{10}$/ , "Please provide a valid phone number"],
+      trim : true,
+      unique : true
+    },
     password: {
       type: String,
       required: [true, "Please provide a password"],
       minlength: [6, "Please provide a password greater than 6 letters"],
       select: false,
     },
-    resetPasswordToken: String,
-    resetPasswordExpire: Date,
   },
   {
     toJSON: {

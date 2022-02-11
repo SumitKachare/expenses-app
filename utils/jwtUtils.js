@@ -17,7 +17,7 @@ export const generateAccessToken = async (userId) => {
 
         // sign access token
         jwt.sign({id : userId} ,accessSecret , {
-            expiresIn : '20s'
+            expiresIn : '30m'
         } , function ( err , token) {
 
             // callback
