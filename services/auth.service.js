@@ -5,7 +5,6 @@ import {  generateAccessToken, generateRefreshToken, verifyRefreshJwt } from "..
 import crypto from "crypto"
 import bcrypt from "bcrypt"
 import { sendResetMail } from "../utils/email.utils.js";
-import { token } from "morgan";
 import client from "../config/redis.config.js";
 
 

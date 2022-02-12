@@ -6,14 +6,14 @@ import { authVerify } from "../middlewares/auth.middeware.js";
 
 const router = express.Router()
 
-router.post("/create" ,createExpSchema , validate , authVerify ,createExpenseCategory)
+router.post("/" ,createExpSchema , validate , authVerify ,createExpenseCategory)
 
-router.get("/getExpense/:expenseCatId" , getByIdExpSchema , validate , authVerify , getExpenseCategoryById)
+router.get("/:expenseCatId" , getByIdExpSchema , validate , authVerify , getExpenseCategoryById)
 
-router.get("/getExpenses" , authVerify , getExpenseCategories)
+router.get("/" , authVerify , getExpenseCategories)
 
-router.patch("/update" , updateExpSchema , validate , authVerify , updateExpenseCategory)
+router.patch("/" , updateExpSchema , validate , authVerify , updateExpenseCategory)
 
-router.delete("/delete" , deleteExpSchema , validate  , authVerify , deleteExpenseCategory)
+router.delete("/" , deleteExpSchema , validate  , authVerify , deleteExpenseCategory)
 
 export default router

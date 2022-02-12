@@ -8,9 +8,9 @@ export const createExpSchema = [
     body("categoryDescription")
     .exists({checkFalsy : true , checkNull : true}).withMessage("Expense description name is required"),
 
-    body("admin")
-    .exists({checkFalsy : true , checkNull : true}).withMessage("Expense admin is required")
-    .isMongoId().withMessage("Invalid Admin")
+    // body("admin")
+    // .exists({checkFalsy : true , checkNull : true}).withMessage("Expense admin is required")
+    // .isMongoId().withMessage("Invalid Admin")
 
 ]
 
@@ -18,7 +18,7 @@ export const createExpSchema = [
 export const getByIdExpSchema = [
 
     param("expenseCatId")
-    .exists({checkFalsy : true , checkNull : true}).withMessage("Expense admin is required")
+    .exists({checkFalsy : true , checkNull : true}).withMessage("Expense category ID is required")
     .isMongoId().withMessage("Invalid Expense category")
 
 ]
