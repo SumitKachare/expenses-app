@@ -1,5 +1,6 @@
 import ExpensesModel from "../models/expense.model.js"
 import ExpenseCategory from "../models/expenseCategory.model.js"
+import {AdvancedResults, getPaginateData} from "../utils/advanvedResults.js"
 import ApiError from "../utils/errorClass.js"
 
 export const createExpenseService = async (adminId , reqBody) =>{
@@ -44,13 +45,27 @@ export const getExpenseByIdService = async (expenseId , adminId) =>{
     return res
 }
 
-export const getAllExpenseService = async (adminId) =>{
+export const getAllExpenseService = async (adminId , reqQuery) =>{
 
-    const expenses = await ExpensesModel.find({admin : adminId})
+
+    let expenses    
+
+    const advancedQuery = new AdvancedResults(ExpensesModel.find({admin : adminId}) , reqQuery , 10).search().filter().sort()
+
+    expenses = await advancedQuery.query
+
+    advancedQuery.pagination()
+
+    const pagination = getPaginateData(expenses.length  , advancedQuery.defaultResultCount , reqQuery.page )
+
+    expenses = await advancedQuery.query.clone();
+
 
     const res = {
         success : true,
-        message : "Expenses found successfully ",
+        message : "Expenses found successfully ", 
+        pagination,
+        count : expenses.length,
         data : expenses
     }
 

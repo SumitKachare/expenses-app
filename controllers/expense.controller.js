@@ -28,8 +28,9 @@ export const getExpenseById = catchAsync(async(req , res ,next)=>{
 export const getExpenses = catchAsync(async(req , res ,next)=>{
 
     const adminId = req.user._id
+    const reqQuery = req.query
 
-    const response = await getAllExpenseService(adminId)
+    const response = await getAllExpenseService(adminId , reqQuery)
 
     res.status(200).send(response)
 })
