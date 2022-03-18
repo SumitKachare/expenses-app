@@ -1,7 +1,7 @@
 import express from "express";
 import { createExpense , getExpenseById , getExpenses , updateExpense  , deleteExpense } from "../controllers/expense.controller.js";
 import { createExpenseVal, deleteExpenseVal, getExpenseIDVal, updateExpenseVal } from "../validations/expense.validation.js";
-import { validate } from "../middlewares/validation middleware.js";
+import { validate } from "../middlewares/validation.middleware.js";
 import { authVerify } from "../middlewares/auth.middeware.js";
 
 const router = express.Router()

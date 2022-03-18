@@ -1,11 +1,12 @@
 import User from "../models/user.model.js";
 import Token from "../models/token.model.js";
 import ApiError from "../utils/errorClass.js";
-import {  generateAccessToken, generateRefreshToken, verifyRefreshJwt } from "../utils/jwtUtils.js";
+import {  generateAccessToken, generateJWTUtilToken, generateRefreshToken, verifyJWTUtilToken, verifyRefreshJwt } from "../utils/jwtUtils.js";
 import crypto from "crypto"
-import bcrypt from "bcrypt"
-import { sendResetMail } from "../utils/email.utils.js";
+import { sendMail } from "../utils/email.utils.js";
 import client from "../config/redis.config.js";
+import { diff_hours } from "../utils/helper.utils.js";
+import moment from "moment";
 
 
 export const registerService = async (reqBody) => {
@@ -106,36 +107,17 @@ export const forgetPasswordService = async (email) => {
     throw new ApiError("Email authentication Error" , 400)
   } 
 
-  // find weather the token exists with the user Id
-  const token = await Token.findOne({userId :user._id})
+  user.isForgetPassword = true
 
-  // delete the token if prevoius exist
-  if (token) {
-    const deleteToken = await Token.findByIdAndDelete(token._id)
-  }
+  await user.save()
 
-  // generate reset token
-  const resetTokenString = crypto.randomBytes(32).toString("hex")
-
-  // hash the reset token
-  const resetPasswordHash = crypto
-    .createHash("sha256")
-    .update(resetTokenString)
-    .digest("hex");
-
-  
-  const tokenData = {
-    userId : user._id,
-    token : resetPasswordHash,
-    createdAt : Date.now()
-  }
-
-  // save token in db
-  const tokenCreated = await Token.create(tokenData)
+  // generate jwt token with user id as payload which is valid for 1 hour
+  const token = await generateJWTUtilToken(user._id , "forget-password")
 
   // create link
-  const link = `${process.env.CLIENT_URL}/password-reset?token=${resetTokenString}&id=${user._id}`
+  const link = `${process.env.CLIENT_URL}/password-reset?token=${token}`
 
+  console.log("link" , link);
   const message = `
         <h1>Reset password URL<h1>
         <p>Please go to this link to reset your password</p>
@@ -150,7 +132,7 @@ export const forgetPasswordService = async (email) => {
   }
   
   // send email
-  const emailRes = await sendResetMail(mailDetails)
+  const emailRes = await sendMail(mailDetails)
   
   const res = {
     success : true,
@@ -164,38 +146,26 @@ export const forgetPasswordService = async (email) => {
 
 export const resetPasswordService = async (resetToken , password) => {
 
-  // hash the token
-  const resetPasswordHash = crypto
-    .createHash("sha256")
-    .update(resetToken)
-    .digest("hex");
+  // verify the token
+  const {data} = await verifyJWTUtilToken(resetToken , "forget-password")
 
-  // find the token with the resetToken in Token DB
-  const tokenData = await Token.findOne({token : resetPasswordHash})
+  // fing the user
+  const user = await User.findById(data)
 
-  if (!tokenData) {
-      throw new ApiError("Password reset error" , 500)
-  }
-
-  // get the user out from the token
-
-  const user = await User.findById(tokenData.userId)
-
+  // find that user exists
   if (!user) {
-    throw new ApiError("Password reset error" , 500)
+    throw new ApiError("Password reset error" , 404)
   }
 
   // change the passowrd of the user to the recieving password
-
   user.password =  password
+  user.isForgetPassword = false
 
   // do user.save()
-
   user.save()
 
   // delete the above token from token db
-
-  const deleteToken = await Token.findByIdAndDelete(tokenData._id)
+  // const deleteToken = await Token.findByIdAndDelete(tokenData._id)
 
   const res = {
     success : true,

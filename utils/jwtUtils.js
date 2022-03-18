@@ -17,7 +17,7 @@ export const generateAccessToken = async (userId) => {
 
         // sign access token
         jwt.sign({id : userId} ,accessSecret , {
-            expiresIn : '30m'
+            expiresIn : process.env.JWT_ACCESS_EXPIRY
         } , function ( err , token) {
 
             // callback
@@ -48,7 +48,7 @@ export const generateRefreshToken = (userId) => {
 
         // sign access token
         jwt.sign({id : userId} ,refreshSecret , {
-            expiresIn : '30d'
+            expiresIn : process.env.JWT_REFRESH_EXPIRY
         } ,  ( err , token) => {
 
             // callback
@@ -117,3 +117,71 @@ export const verifyRefreshJwt = (token) => {
         })
     })
 } 
+
+
+export const generateJWTUtilToken = (data , type) => {
+
+    let secret 
+    let expiry
+
+    const emailSecret = process.env.JWT_INVITE_SECRET
+    const forgetSecret = process.env.JWT_FORGET_SECRET
+
+    const emailExpiry = process.env.JWT_INVITE_EXPIRY
+    const forgetExpiry = process.env.JWT_FORGET_EXPIRY
+
+    if (type === "category-invite") {
+        secret = emailSecret
+        expiry =  emailExpiry
+    }  
+    
+    if(type === "forget-password"){
+        secret = forgetSecret
+        expiry = forgetExpiry
+    }
+
+    
+
+    return new Promise((resolve , reject)=>{
+        jwt.sign({data} , secret , {expiresIn : expiry} , (err , token)=>{
+            if (err) {
+                reject(err)
+            }
+
+            resolve(token)
+        })
+    })
+
+}
+
+export const verifyJWTUtilToken = (token , type) => {
+
+    let secret 
+
+    const emailSecret = process.env.JWT_INVITE_SECRET
+    const forgetSecret = process.env.JWT_FORGET_SECRET
+
+    if (type === "category-invite") {
+        secret = emailSecret
+    }  
+    
+    if(type === "forget-password"){
+        secret = forgetSecret
+    }
+
+    return new Promise((resolve , reject)=>{
+        jwt.verify(token , secret , (err , token)=>{
+            if (err) {
+                console.log("err" , err);
+                if (err.name === "TokenExpiredError") {
+                    reject(new ApiError("Token Expired" , 401))
+                }else{
+                    reject(new ApiError("Token Denied" , 401))
+                }
+            }
+
+            resolve(token)
+        })
+    })
+
+}

@@ -30,6 +30,10 @@ const userSchema = new mongoose.Schema(
       minlength: [6, "Please provide a password greater than 6 letters"],
       select: false,
     },
+    isForgetPassword : {
+      type: Boolean,
+      default : false
+    }
   },
   {
     toJSON: {

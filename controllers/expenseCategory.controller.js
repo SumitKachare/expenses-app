@@ -1,4 +1,4 @@
-import { createExpenseCategoryService, deleteExpenseCategoryService, getExpenseCategoriesService, getExpenseCategoryServiceById, updateExpenseCategoryService } from "../services/expenseCategory.services.js";
+import { categoryInviteService, createExpenseCategoryService, deleteExpenseCategoryService, expCategoryInviteAcceptService, getExpenseCategoriesService, getExpenseCategoryServiceById, updateExpenseCategoryService } from "../services/expenseCategory.services.js";
 import catchAsync from "../utils/catchAsync.js";
 
 export const createExpenseCategory = catchAsync(async (req , res, next)=>{
@@ -54,5 +54,35 @@ export const deleteExpenseCategory = catchAsync(async (req , res, next)=>{
     const response = await deleteExpenseCategoryService(expenseCategoryId , adminId)
 
     res.status(204).send(response)
+
+})
+
+
+// Invite controllers
+
+export const categoryInvite = catchAsync(async (req , res, next)=>{
+
+    const {data} = req.body
+
+    const adminId = req.user
+
+    const response = await categoryInviteService(data , adminId)
+
+    res.status(200).json(response)
+
+
+})
+
+
+export const categoryInviteAccept = catchAsync(async (req , res, next)=>{
+
+    const {expenseInviteToken} = req.body
+
+    const admin = req.user
+
+    const response = await expCategoryInviteAcceptService(expenseInviteToken , admin)
+
+    res.status(200).json(response)
+
 
 })

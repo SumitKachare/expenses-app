@@ -1,5 +1,7 @@
 import mongoose from "mongoose"
 
+const emailExpiry = process.env.EMAIL_INVITE_TTL
+
 const tokenSchema = new mongoose.Schema({
     userId :  {
         type : mongoose.Schema.Types.ObjectId,
@@ -9,12 +11,17 @@ const tokenSchema = new mongoose.Schema({
         type : String,
         required : true
     },
+    // did not work
     createdAt : {
         type :Date,
-        expires : 3600,
+        index : {expires : 40},
         default : Date.now
     }
 })
+
+
+// did not work
+// tokenSchema.index({createdAt : 1} , {expireAfterSeconds : 60})
 
 const Token = mongoose.model("Token" , tokenSchema)
 

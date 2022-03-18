@@ -1,6 +1,6 @@
 import express from "express";
 import { register , login, forgetPassword, resetPassword, refreshToken, logout } from "../controllers/auth.controller.js";
-import { validate } from "../middlewares/validation middleware.js";
+import { validate } from "../middlewares/validation.middleware.js";
 import { registerSchema , loginSchema, forgetPassSchema, resetPassSchema, refreshSchema, logoutSchema } from "../validations/auth.validations.js";
 
 

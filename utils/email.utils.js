@@ -1,6 +1,6 @@
 import nodemailer from  "nodemailer"
 
-export const sendResetMail = (options) => {
+export const sendMail = (options) => {
 
     const transporter = nodemailer.createTransport({
         service : process.env.EMAIL_SERVICE,
