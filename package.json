@@ -5,22 +5,30 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon server.js"
+    "start": "cross-env NODE_ENV=production node src/server.js",
+    "dev": "cross-env NODE_ENV=development nodemon -L src/server.js",
+    "docker-dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml",
+    "docker-prod": "docker-compose -f docker-compose.yml -f docker-compose.prod.yml"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^14.2.0",
     "express": "^4.17.2",
     "express-validator": "^6.14.0",
+    "helmet": "^5.0.2",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.1",
     "mongoose": "^6.1.7",
     "morgan": "^1.10.0",
     "nodemailer": "^6.7.2",
-    "redis": "^4.0.3"
+    "redis": "^4.0.3",
+    "winston": "^3.6.0",
+    "winston-daily-rotate-file": "^4.6.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"

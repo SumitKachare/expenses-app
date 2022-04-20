@@ -1,0 +1,1 @@
+// store variable names stored in here to avoid typo mistake

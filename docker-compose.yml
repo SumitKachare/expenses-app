@@ -1,0 +1,34 @@
+version: '3.9'
+
+services:
+  api:
+    build: .
+    ports: 
+      - 5000:5000
+    env_file:
+      - ./.env.docker
+    depends_on:
+      - mongo_db
+      - cache
+    
+
+  mongo_db:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo_db:/data/db
+  
+  cache:
+    image: redis
+    ports:
+      - 6379:6379
+    restart: always
+    volumes: 
+      - cache:/data
+    depends_on:
+      - mongo_db
+
+volumes:
+  mongo_db : {}
+  cache: {}
